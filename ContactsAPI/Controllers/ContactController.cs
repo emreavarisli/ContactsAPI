@@ -32,7 +32,7 @@ namespace ContactsAPI.Controllers
                 Email = addContactRequest.Email,
                 FullName = addContactRequest.FullName,
                 Phone = addContactRequest.Phone,
-            };
+            };          
 
             await dbContext.Contacts.AddAsync(contact);
             await dbContext.SaveChangesAsync(); 
@@ -40,5 +40,25 @@ namespace ContactsAPI.Controllers
             return Ok(contact);
         }
 
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
+        {
+            var contact = await dbContext.Contacts.FindAsync(id);
+
+            if(contact != null) 
+            {
+                contact.FullName = updateContactRequest.FullName;
+                contact.Address = updateContactRequest.Address;
+                contact.Phone = updateContactRequest.Phone;
+                contact.Email = updateContactRequest.Email;
+
+                await dbContext.SaveChangesAsync();
+
+                return Ok(contact);
+            }
+
+            return NotFound();
+        }
     }
 }
